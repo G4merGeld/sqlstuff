@@ -94,7 +94,8 @@ public class Main {
             stmt.addBatch("INSERT INTO Player VALUES(1, 'Oleksandr', 's1mple', 'Kostyljev', 'Counter-Strike: Global Offensive')");
             stmt.addBatch("INSERT INTO Player VALUES(2, 'Danil', 'Dendi', 'Ishutin', 'Dota 2')");
             stmt.addBatch("INSERT INTO Player VALUES(3, 'Olof', 'olofmeister', 'Kajbjer', 'Counter-Strike: Global Offensive')");
-            stmt.addBatch("INSERT INTO Player Values(4, 'Martin', 'Rekkles', 'Larsson', 'League of Legends')");
+            stmt.addBatch("INSERT INTO Player VALUES(4, 'Martin', 'Rekkles', 'Larsson', 'League of Legends')");
+            stmt.addBatch("INSERT INTO Player VALUES(5, 'Michael', 'MoneyBoy', 'Geld', 'League of Legends')");
             stmt.executeBatch();
 
             //Owner
@@ -167,7 +168,7 @@ public class Main {
         }
     }
 
-    //i)
+    //  i)
     static void QueryDB_1() {
         try {
             Statement stmt = connex.createStatement();
@@ -228,6 +229,41 @@ public class Main {
         }
     }
 
+
+    //  ii)
+    static void QueryDB_5() {
+        try {
+            Statement stmt = connex.createStatement();
+            ResultSet resultSet;
+            resultSet = stmt.executeQuery("SELECT Player.Gamertag, Team.* FROM Player, Team, PlaysIN  WHERE Player.PlayerID = PlaysIn.PlayerID AND Team.team = PlaysIn.team");
+            System.out.println("Players gamertag and their corresponding team they are playin in");
+            System.out.println(ResultToString(resultSet));
+            resultSet.close();
+
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 5 error: " + E.getMessage());
+        }
+    }
+
+    static void QueryDB_6() {
+        try {
+            Statement stmt = connex.createStatement();
+            ResultSet resultSet;
+            resultSet = stmt.executeQuery("SELECT Player.* FROM Player WHERE NOT EXISTS(SELECT PlaysIn.playerid FROM PlaysIn WHERE PlaysIn.playerid = Player.PlayerId)");
+            System.out.println("Players who are not playing in a team");
+            System.out.println(ResultToString(resultSet));
+            resultSet.close();
+
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 6 error: " + E.getMessage());
+        }
+    }
+
+
+
+
     public static void main(String[] args) {
         try {
             Class.forName("org.postgresql.Driver");
@@ -242,10 +278,12 @@ public class Main {
             StructDB();
             UpdateDB();
             //QueryAll();
-            QueryDB_1();
-            QueryDB_2();
-            QueryDB_3();
-            QueryDB_4();
+            //QueryDB_1();
+            //QueryDB_2();
+            //QueryDB_3();
+            //QueryDB_4();
+            QueryDB_5();
+            QueryDB_6();
 
             connex.close();
         } catch(SQLException E) {
