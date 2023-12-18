@@ -52,13 +52,13 @@ public class Main {
             result = stmt.executeUpdate("DROP TABLE IF EXISTS Game CASCADE");
             result = stmt.executeUpdate("CREATE TABLE Game(Game text UNIQUE NOT NULL PRIMARY KEY, ReleaseDate date NOT NULL, PeakViewership integer NOT NULL)");
 
-            //Tabelle Player: [PlayerID | PlayerForname | GamerTag | PlayerSurname| Game]
-            result = stmt.executeUpdate("DROP TABLE IF EXISTS Player CASCADE");
-            result = stmt.executeUpdate("CREATE TABLE Player(PlayerID integer UNIQUE NOT NULL PRIMARY KEY, PlayerForname text NOT NULL, GamerTag text NOT NULL, PlayerSurname text NOT NULL, Game text NOT NULL REFERENCES Game)");
+            //Tabelle ProPlayer: [PlayerID | PlayerForename | GamerTag | PlayerSurname| Game]
+            result = stmt.executeUpdate("DROP TABLE IF EXISTS ProPlayer CASCADE");
+            result = stmt.executeUpdate("CREATE TABLE ProPlayer(PlayerID integer UNIQUE NOT NULL PRIMARY KEY, PlayerForename text NOT NULL, GamerTag text NOT NULL, PlayerSurname text NOT NULL, Game text NOT NULL REFERENCES Game)");
 
-            //Tabelle Owner: [OwnerID | OwnerSurname | OwnerForname]
+            //Tabelle Owner: [OwnerID | OwnerSurname | OwnerForename]
             result = stmt.executeUpdate("DROP TABLE IF EXISTS Owner CASCADE");
-            result = stmt.executeUpdate("CREATE TABLE Owner(OwnerID integer UNIQUE NOT NULL PRIMARY KEY, OwnerSurname text NOT NULL, OwnerForname text NOT NULL)");
+            result = stmt.executeUpdate("CREATE TABLE Owner(OwnerID integer UNIQUE NOT NULL PRIMARY KEY, OwnerSurname text NOT NULL, OwnerForename text NOT NULL)");
 
             //Tabelle Team: [Team | OwnerID | Founded]
             result = stmt.executeUpdate("DROP TABLE IF EXISTS Team CASCADE");
@@ -66,7 +66,7 @@ public class Main {
 
             //Tabelle PlaysIn: [PlayerID | Team]
             result = stmt.executeUpdate("DROP TABLE IF EXISTS PlaysIn CASCADE ");
-            result = stmt.executeUpdate("CREATE TABLE PlaysIn(PlayerID integer NOT NULL REFERENCES Player, Team text NOT NULL REFERENCES Team)");
+            result = stmt.executeUpdate("CREATE TABLE PlaysIn(PlayerID integer NOT NULL REFERENCES ProPlayer, Team text NOT NULL REFERENCES Team)");
             stmt.close();
         } catch (SQLException E) {
             System.out.println("Exception: " + E.getMessage());
@@ -88,14 +88,15 @@ public class Main {
             stmt.addBatch("INSERT INTO Game VALUES('Valorant', '2020-06-02', 1505804)");
             stmt.executeBatch();
 
-            //Player
-            result = stmt.executeUpdate("DELETE FROM Player");
-            stmt.addBatch("INSERT INTO Player VALUES(0, 'Lee', 'Faker', 'Sang-hyeok', 'League of Legends')");
-            stmt.addBatch("INSERT INTO Player VALUES(1, 'Oleksandr', 's1mple', 'Kostyljev', 'Counter-Strike: Global Offensive')");
-            stmt.addBatch("INSERT INTO Player VALUES(2, 'Danil', 'Dendi', 'Ishutin', 'Dota 2')");
-            stmt.addBatch("INSERT INTO Player VALUES(3, 'Olof', 'olofmeister', 'Kajbjer', 'Counter-Strike: Global Offensive')");
-            stmt.addBatch("INSERT INTO Player VALUES(4, 'Martin', 'Rekkles', 'Larsson', 'League of Legends')");
-            stmt.addBatch("INSERT INTO Player VALUES(5, 'Michael', 'MoneyBoy', 'Geld', 'League of Legends')");
+            //ProPlayer
+            result = stmt.executeUpdate("DELETE FROM ProPlayer");
+            stmt.addBatch("INSERT INTO ProPlayer VALUES(0, 'Lee', 'Faker', 'Sang-hyeok', 'League of Legends')");
+            stmt.addBatch("INSERT INTO ProPlayer VALUES(1, 'Oleksandr', 's1mple', 'Kostyljev', 'Counter-Strike: Global Offensive')");
+            stmt.addBatch("INSERT INTO ProPlayer VALUES(2, 'Danil', 'Dendi', 'Ishutin', 'Dota 2')");
+            stmt.addBatch("INSERT INTO ProPlayer VALUES(3, 'Olof', 'olofmeister', 'Kajbjer', 'Counter-Strike: Global Offensive')");
+            stmt.addBatch("INSERT INTO ProPlayer VALUES(4, 'Martin', 'Rekkles', 'Larsson', 'League of Legends')");
+            stmt.addBatch("INSERT INTO ProPlayer VALUES(5, 'Michael', 'MoneyBoy', 'Geld', 'League of Legends')");
+            stmt.addBatch("INSERT INTO ProPlayer VALUES(6, 'Tyson', 'TenZ', 'Ngo', 'Valorant')");
             stmt.executeBatch();
 
             //Owner
@@ -142,8 +143,8 @@ public class Main {
             resultSet = stmt.executeQuery("SELECT * FROM Game");
             System.out.println(ResultToString(resultSet));
 
-            System.out.println("PLAYERS");
-            resultSet = stmt.executeQuery("SELECT * FROM Player");
+            System.out.println("PROPLAYERS");
+            resultSet = stmt.executeQuery("SELECT * FROM ProPlayer");
             System.out.println(ResultToString(resultSet));
             resultSet.close();
 
@@ -173,9 +174,10 @@ public class Main {
         try {
             Statement stmt = connex.createStatement();
             ResultSet resultSet;
-            resultSet = stmt.executeQuery("SELECT GamerTag FROM Player");
-            System.out.println("All gamertags");
+            resultSet = stmt.executeQuery("SELECT GamerTag FROM ProPlayer");
+            System.out.println("===All GamerTags===");
             System.out.println(ResultToString(resultSet));
+            System.out.println();
             resultSet.close();
 
             stmt.close();
@@ -189,8 +191,9 @@ public class Main {
             Statement stmt = connex.createStatement();
             ResultSet resultSet;
             resultSet = stmt.executeQuery("SELECT Team FROM Team WHERE Founded BETWEEN '20000101' AND '20101230'");
-            System.out.println("All teams formed between 2001 and 2011");
+            System.out.println("===All Teams formed between 2001 and 2011===");
             System.out.println(ResultToString(resultSet));
+            System.out.println();
             resultSet.close();
 
             stmt.close();
@@ -203,9 +206,10 @@ public class Main {
         try {
             Statement stmt = connex.createStatement();
             ResultSet resultSet;
-            resultSet = stmt.executeQuery("SELECT OwnerSurname, OwnerForname FROM Owner WHERE OwnerSurname LIKE 'M%' OR OwnerForname LIKE 'J%'");
-            System.out.println("All team owners whose surname start with m or forname start with j");
+            resultSet = stmt.executeQuery("SELECT OwnerSurname, OwnerForename FROM Owner WHERE OwnerSurname LIKE 'M%' OR OwnerForename LIKE 'J%'");
+            System.out.println("===All Team Owners whose Surname start with m or Forename start with j===");
             System.out.println(ResultToString(resultSet));
+            System.out.println();
             resultSet.close();
 
             stmt.close();
@@ -219,8 +223,9 @@ public class Main {
             Statement stmt = connex.createStatement();
             ResultSet resultSet;
             resultSet = stmt.executeQuery("SELECT Game, PeakViewership FROM Game ORDER BY PeakViewership DESC");
-            System.out.println("All games descendengly ordered by peak viewership");
+            System.out.println("===All games descendengly ordered by peak viewership===");
             System.out.println(ResultToString(resultSet));
+            System.out.println();
             resultSet.close();
 
             stmt.close();
@@ -228,16 +233,14 @@ public class Main {
             System.out.println("Query 4 error: " + E.getMessage());
         }
     }
-
-
-    //  ii)
     static void QueryDB_5() {
         try {
             Statement stmt = connex.createStatement();
             ResultSet resultSet;
-            resultSet = stmt.executeQuery("SELECT Player.Gamertag, Team.* FROM Player, Team, PlaysIN  WHERE Player.PlayerID = PlaysIn.PlayerID AND Team.team = PlaysIn.team");
-            System.out.println("Players gamertag and their corresponding team they are playin in");
+            resultSet = stmt.executeQuery("SELECT * FROM Game WHERE Game.releasedate = (SELECT MAX(Game.releasedate) FROM Game)");
+            System.out.println("===Select newest Game===");
             System.out.println(ResultToString(resultSet));
+            System.out.println();
             resultSet.close();
 
             stmt.close();
@@ -246,13 +249,16 @@ public class Main {
         }
     }
 
+    //  ii)
     static void QueryDB_6() {
         try {
             Statement stmt = connex.createStatement();
             ResultSet resultSet;
-            resultSet = stmt.executeQuery("SELECT Player.* FROM Player WHERE NOT EXISTS(SELECT PlaysIn.playerid FROM PlaysIn WHERE PlaysIn.playerid = Player.PlayerId)");
-            System.out.println("Players who are not playing in a team");
+            //resultSet = stmt.executeQuery("SELECT ProPlayer.Gamertag, Team.Team FROM ProPlayer, Team, PlaysIN  WHERE ProPlayer.PlayerID = PlaysIn.PlayerID AND Team.team = PlaysIn.team");
+            resultSet = stmt.executeQuery("SELECT ProPlayer.Gamertag, PlaysIn.team FROM ProPlayer FULL OUTER JOIN PlaysIN USING(PlayerId)");
+            System.out.println("===Players GamerTag and their corresponding Team they are playing in===");
             System.out.println(ResultToString(resultSet));
+            System.out.println();
             resultSet.close();
 
             stmt.close();
@@ -261,8 +267,70 @@ public class Main {
         }
     }
 
+    static void QueryDB_7() {
+        try {
+            Statement stmt = connex.createStatement();
+            ResultSet resultSet;
+            resultSet = stmt.executeQuery("SELECT ProPlayer.* FROM ProPlayer WHERE NOT EXISTS(SELECT PlaysIn.playerid FROM PlaysIn WHERE PlaysIn.playerid = ProPlayer.PlayerId)");
+            System.out.println("===Players who are not playing in a Team===");
+            System.out.println(ResultToString(resultSet));
+            System.out.println();
+            resultSet.close();
 
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 7 error: " + E.getMessage());
+        }
+    }
 
+    static void QueryDB_8() {
+        try {
+            Statement stmt = connex.createStatement();
+            ResultSet resultSet;
+            resultSet = stmt.executeQuery("SELECT Game.*, ProPlayer.gamertag FROM Game LEFT OUTER JOIN ProPlayer ON Game.game = ProPlayer.Game ORDER BY Game.Game");
+            System.out.println("===Games and Players playing that Game===");
+            System.out.println(ResultToString(resultSet));
+            System.out.println();
+            resultSet.close();
+
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 8 error: " + E.getMessage());
+        }
+    }
+
+    static void QueryDB_9() {
+        try {
+            Statement stmt = connex.createStatement();
+            ResultSet resultSet;
+            //resultSet = stmt.executeQuery("SELECT ProPlayer.GamerTag, Game.* FROM ProPlayer, Game WHERE ProPlayer.Game = Game.Game AND Game.releasedate = (SELECT MAX(releasedate) FROM Game)");
+            resultSet = stmt.executeQuery("SELECT * FROM(SELECT ProPlayer.GamerTag, Game.* FROM ProPlayer FULL OUTER JOIN Game ON ProPlayer.Game = Game.Game) AS Subtable WHERE Subtable.releasedate = (SELECT MAX(Game.releasedate) FROM GAME)");
+            System.out.println("===ProPlayers playing the newest Game===");
+            System.out.println(ResultToString(resultSet));
+            System.out.println();
+            resultSet.close();
+
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 9 error: " + E.getMessage());
+        }
+    }
+
+    static void QueryDB_10() {
+        try {
+            Statement stmt = connex.createStatement();
+            ResultSet resultSet;
+            resultSet = stmt.executeQuery("SELECT Team.team, COUNT(PlaysIn.team) FROM Team LEFT JOIN PlaysIn ON Team.team = PlaysIn.team GROUP BY Team.team");
+            System.out.println("===How many players in a team===");
+            System.out.println(ResultToString(resultSet));
+            System.out.println();
+            resultSet.close();
+
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 10 error: " + E.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         try {
@@ -278,13 +346,16 @@ public class Main {
             StructDB();
             UpdateDB();
             //QueryAll();
-            //QueryDB_1();
-            //QueryDB_2();
-            //QueryDB_3();
-            //QueryDB_4();
+            QueryDB_1();
+            QueryDB_2();
+            QueryDB_3();
+            QueryDB_4();
             QueryDB_5();
             QueryDB_6();
-
+            QueryDB_7();
+            QueryDB_8();
+            QueryDB_9();
+            QueryDB_10();
             connex.close();
         } catch(SQLException E) {
             System.out.println("Connection error: " + E.getMessage());

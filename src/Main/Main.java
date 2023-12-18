@@ -799,6 +799,53 @@ public class Main
         { System.out.println("Exception: " + E.getMessage()); }
     }
 
+
+    static void QueryDB_AUFGABE() {
+        try {
+            Statement stmt = Connex.createStatement();
+            ResultSet resultSet;
+            resultSet = stmt.executeQuery("SELECT Name FROM Show AS N WHERE (SELECT COUNT(Name) FROM PlaysIn WHERE PlaysIn.name = n.name) >= 4");
+            System.out.println("Players who are not playing in a team");
+            System.out.println(ResultToString(resultSet));
+            resultSet.close();
+
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 6 error: " + E.getMessage());
+        }
+    }
+
+    static void QueryDB_AUFGABE2() {
+        try {
+            Statement stmt = Connex.createStatement();
+            ResultSet resultSet;
+            resultSet = stmt.executeQuery("SELECT Character.Surname, Character.Forename, Performs.ActrID FROM Character FULL OUTER JOIN Performs ON Character.CharID = performs.CharID");
+
+            System.out.println("asd");
+            System.out.println(ResultToString(resultSet));
+            resultSet.close();
+
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 6 error: " + E.getMessage());
+        }
+    }
+
+
+    static void QueryDB_AUFGABE3() {
+        try {
+            Statement stmt = Connex.createStatement();
+            ResultSet resultSet;
+            resultSet = stmt.executeQuery("SELECT (CAST ((SELECT COUNT(*) FROM Character) AS REAL) / (SELECT COUNT(*) FROM SHOW))");
+            System.out.println("durschnittliche anzahl an characters/actors per show");
+            System.out.println(ResultToString(resultSet));
+            resultSet.close();
+
+            stmt.close();
+        } catch (SQLException E) {
+            System.out.println("Query 6 error: " + E.getMessage());
+        }
+    }
     // Todo Aufgaben:
     // * Charaktere/Akteure, deren Vorname mit "J" beginnen
     // * Charaktere/Akteure, die gleich viele Zeichen im Vor-/Nachnamen haben
@@ -855,7 +902,7 @@ public class Main
             //QueryDB_7();
             //QueryDB_8();
             //QueryDB_9();
-
+            QueryDB_AUFGABE3();
             Connex.close();
         }
         catch (SQLException E)
