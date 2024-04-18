@@ -340,7 +340,7 @@ public class Main {
         }
 
         try {
-            connex = DriverManager.getConnection("jdbc:postgresql:ESport", "postgres", "blubb");
+            connex = DriverManager.getConnection("jdbc:postgresql:Studienleistung", "postgres", "blubb");
 
 
             StructDB();
